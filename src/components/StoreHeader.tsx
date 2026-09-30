@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Search, ShoppingBag, UserRound, Menu, X, Zap, ClipboardList, Tag, LayoutGrid, TrendingUp, ShieldCheck } from "lucide-react";
+import { Search, ShoppingBag, UserRound, Menu, X, Store, ClipboardList, Tag, LayoutGrid, TrendingUp, ShieldCheck } from "lucide-react";
 
 type StoreHeaderProps = {
   cartCount?: number;
@@ -30,7 +30,7 @@ export function StoreHeader({ cartCount = 0, search = "", onSearch, onCartClick 
   return <>
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center gap-3 px-4 sm:gap-6 sm:px-6 lg:px-8">
-        <Link to="/" className="flex shrink-0 items-center gap-2.5"><span className="grid h-10 w-10 place-items-center rounded-xl bg-slate-950 text-white shadow-lg"><Zap size={19} fill="currentColor" /></span><span className="text-xl font-black tracking-tight text-slate-950">NEXO<span className="text-blue-600">TECH</span></span></Link>
+        <Link to="/" className="flex shrink-0 items-center gap-2.5"><span className="grid h-10 w-10 place-items-center rounded-xl bg-slate-950 text-white shadow-lg"><Store size={19} strokeWidth={2.2} /></span><span className="text-xl font-black tracking-tight text-slate-950">NEXO<span className="text-blue-600">TECH</span></span></Link>
         <nav className="hidden items-center gap-7 lg:flex">{links.map(([label,href]) => <a key={label} href={href} className="text-sm font-semibold text-slate-600 hover:text-slate-950">{label}</a>)}</nav>
         <div className="ml-auto hidden min-w-48 max-w-sm flex-1 items-center rounded-xl border border-slate-200 bg-slate-50 px-3 md:flex"><Search size={18} className="shrink-0 text-slate-400" /><input id="store-search" value={search} onChange={e => handleSearch(e.target.value)} aria-label="Buscar produtos" className="w-full bg-transparent px-2 py-2.5 text-sm outline-none placeholder:text-slate-400" placeholder="Buscar tecnologia..." /></div>
         <button aria-label="Buscar produtos" onClick={focusSearch} className="rounded-xl p-2.5 text-slate-600 transition hover:bg-slate-100 hover:text-blue-600"><Search size={21} /></button>
