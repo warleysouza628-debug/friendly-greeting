@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRight, Check, ShieldCheck, Sparkles, Truck, CreditCard, Headphones, SearchX, Timer, Clock3, Flame } from "lucide-react";
+import { ArrowRight, ShieldCheck, Truck, CreditCard, Headphones, SearchX, Timer, Flame } from "lucide-react";
 import { categories, products, type Product } from "../data/products";
 import { StoreHeader } from "../components/StoreHeader";
 import { ProductCard } from "../components/ProductCard";
