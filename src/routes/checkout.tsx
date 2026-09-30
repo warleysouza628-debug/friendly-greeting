@@ -10,7 +10,7 @@ type Cart = Record<string, number>;
 function Checkout() {
   const [cart, setCart] = useState<Cart>({});
   const [done, setDone] = useState(false);
-  const [customer, setCustomer] = useState({ name: "", email: "", address: "", city: "", zip: "" });
+  const [customer, setCustomer] = useState({ name: "", email: "", address: "", number: "", zip: "", reference: "", city: "" });
 
   useEffect(() => { try { setCart(JSON.parse(localStorage.getItem("nexotech-cart") || "{}")); } catch { setCart({}); } }, []);
   const items = useMemo(() => Object.entries(cart).map(([id, quantity]) => { const product = products.find(p => p.id === id); return product ? { product, quantity } : null; }).filter(Boolean) as {product: typeof products[number]; quantity:number}[], [cart]);
@@ -20,7 +20,7 @@ function Checkout() {
   const money = (v:number) => `R$ ${v.toFixed(2).replace(".", ",")}`;
 
   const finish = () => {
-    if (!customer.name || !customer.email || !customer.address || !customer.city || !customer.zip || !items.length) return;
+    if (!customer.name || !customer.email || !customer.address || !customer.number || !customer.city || !customer.zip || !items.length) return;
     const order = { id: `NX-${Date.now().toString().slice(-8)}`, date: new Date().toISOString(), status: "Pagamento aprovado", tracking: "", customer, items: items.map(i => ({ productId: i.product.id, name: i.product.name, image: i.product.image, quantity: i.quantity, price: i.product.price })), total };
     const orders = JSON.parse(localStorage.getItem("nexotech-orders") || "[]");
     localStorage.setItem("nexotech-orders", JSON.stringify([order, ...orders]));
@@ -38,7 +38,7 @@ function Checkout() {
         <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-slate-600"><ArrowLeft size={16}/> Voltar à loja</Link>
         <div className="rounded-2xl border border-slate-200 bg-white p-6"><h1 className="text-2xl font-black">Finalizar compra</h1><p className="mt-1 text-sm text-slate-500">Preencha seus dados para registrar o pedido.</p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            {([["name","Nome completo","Seu nome"],["email","E-mail","voce@email.com"],["zip","CEP","00000-000"],["city","Cidade","Sua cidade"],["address","Endereço","Rua, número e complemento"]] as const).map(([key,label,placeholder]) => <label key={key} className={key === "address" ? "sm:col-span-2" : ""}><span className="mb-1.5 block text-xs font-bold text-slate-600">{label}</span><input value={customer[key]} onChange={e => setCustomer({...customer,[key]:e.target.value})} placeholder={placeholder} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white"/></label>)}
+            {([["name","Nome completo","Seu nome"],["email","E-mail","voce@email.com"],["zip","CEP","00000-000"],["city","Cidade","Sua cidade"],["address","Endereço","Rua, bairro e complemento"],["number","Número","Ex.: 123"],["reference","Ponto de referência (opcional)","Ex.: perto da praça ou portão azul"]] as const).map(([key,label,placeholder]) => <label key={key} className={key === "address" || key === "reference" ? "sm:col-span-2" : ""}><span className="mb-1.5 block text-xs font-bold text-slate-600">{label}</span>{key === "reference" && <span className="ml-1 text-[11px] font-medium text-slate-400">(não é obrigatório)</span>}<input value={customer[key]} onChange={e => setCustomer({...customer,[key]:e.target.value})} placeholder={placeholder} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white"/></label>)}
           </div>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-6"><div className="flex items-center gap-3"><div className="grid h-10 w-10 place-items-center rounded-xl bg-blue-50 text-blue-600"><CreditCard size={20}/></div><div><p className="font-black">Pagamento</p><p className="text-xs text-slate-500">Pix, cartão ou outra forma configurada na loja.</p></div></div><div className="mt-5 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">O pedido será registrado como <strong>Pagamento aprovado</strong> nesta versão. Para receber pagamentos reais, conecte um gateway como Mercado Pago, Stripe ou outro provedor.</div></div>
