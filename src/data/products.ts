@@ -9,6 +9,7 @@ export const categories = [
   { name: "Setup Gamer", icon: "gamepad", tone: "from-cyan-600 to-blue-700", image: "https://images.unsplash.com/photo-1547394765-185e1e68f34e?auto=format&fit=crop&w=1000&q=85" },
   { name: "Smartwatches", icon: "watch", tone: "from-emerald-600 to-teal-700", image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=1000&q=85" },
   { name: "Carregadores & Cabos", icon: "usb", tone: "from-amber-500 to-orange-600", image: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=1000&q=85" },
+  { name: "PS5 & PlayStation", icon: "gamepad", tone: "from-blue-700 to-indigo-900", image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=1000&q=85" },
 ] as const;
 
 export const products: Product[] = [
@@ -20,4 +21,7 @@ export const products: Product[] = [
   { id: "charger", name: "Carregador Turbo 65W GaN", category: "Carregadores & Cabos", price: 139.9, oldPrice: 179.9, rating: 4.9, reviews: 97, image: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=900&q=85" },
   { id: "cable", name: "Kit Cabo USB-C Reforçado", category: "Carregadores & Cabos", price: 49.9, oldPrice: 69.9, rating: 4.8, reviews: 112, badge: "OFERTA", image: "https://images.unsplash.com/photo-1625842268584-8f3296236761?auto=format&fit=crop&w=900&q=85" },
   { id: "phone-case", name: "Capa Premium Antichoque", category: "Celulares & Acessórios", price: 59.9, oldPrice: 89.9, rating: 4.9, reviews: 89, image: "https://images.unsplash.com/photo-1601593346740-925612772716?auto=format&fit=crop&w=900&q=85" },
+  { id: "ps5-controller", name: "Controle DualSense PS5", category: "PS5 & PlayStation", price: 449.9, oldPrice: 549.9, rating: 4.9, reviews: 412, badge: "OFERTA PS5", image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=900&q=85" },
+  { id: "ps5-headset", name: "Headset Gamer Pulse 3D", category: "PS5 & PlayStation", price: 389.9, oldPrice: 499.9, rating: 4.8, reviews: 276, badge: "OFERTA PS5", image: "https://images.unsplash.com/photo-1599669454699-248893623440?auto=format&fit=crop&w=900&q=85" },
+  { id: "ps5-ssd", name: "SSD NVMe 1TB para PS5", category: "PS5 & PlayStation", price: 499.9, oldPrice: 649.9, rating: 4.9, reviews: 198, badge: "OFERTA PS5", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=900&q=85" },
 ];
