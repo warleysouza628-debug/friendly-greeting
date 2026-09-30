@@ -9,7 +9,6 @@ export const categories = [
   { name: "Setup Gamer", icon: "gamepad", tone: "from-cyan-600 to-blue-700", image: "https://images.unsplash.com/photo-1547394765-185e1e68f34e?auto=format&fit=crop&w=1000&q=85" },
   { name: "Smartwatches", icon: "watch", tone: "from-emerald-600 to-teal-700", image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=1000&q=85" },
   { name: "Carregadores & Cabos", icon: "usb", tone: "from-amber-500 to-orange-600", image: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=1000&q=85" },
-  { name: "PS5 & PlayStation", icon: "gamepad", tone: "from-blue-700 to-indigo-900", image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=1000&q=85" },
 ] as const;
 
 export const products: Product[] = [
