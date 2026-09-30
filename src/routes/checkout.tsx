@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle2, CreditCard, LockKeyhole, MapPin, PackageCheck } from "lucide-react";
 import { products } from "../data/products";
 
@@ -8,7 +8,6 @@ export const Route = createFileRoute("/checkout")({ component: Checkout });
 type Cart = Record<string, number>;
 
 function Checkout() {
-  const navigate = useNavigate();
   const [cart, setCart] = useState<Cart>({});
   const [done, setDone] = useState(false);
   const [customer, setCustomer] = useState({ name: "", email: "", address: "", city: "", zip: "" });
