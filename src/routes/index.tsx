@@ -152,7 +152,7 @@ function Index() {
         {filtered.length > 0 ? <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{filtered.map(p => <ProductCard key={p.id} product={p} onAdd={add} />)}</div> : <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center"><SearchX className="mx-auto text-slate-400" size={36} /><h3 className="mt-4 text-lg font-black">Nenhum produto encontrado</h3><p className="mt-2 text-sm text-slate-500">Tente outro termo ou volte para todas as categorias.</p><button onClick={() => { setSearch(""); setCategory("Todos"); }} className="mt-5 rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-blue-600">Limpar busca</button></div>}
       </section>
 
-      <section className="border-y border-slate-200 bg-white">
+      <section id="beneficios" className="border-y border-slate-200 bg-white">
         <div className="mx-auto grid max-w-7xl gap-px bg-slate-200 sm:grid-cols-2 lg:grid-cols-4">
           {[{title:"Frete rápido",Icon:Truck,text:"Envio com rastreio do início ao fim."},{title:"Compra protegida",Icon:ShieldCheck,text:"Pagamento seguro e proteção no pedido."},{title:"Pagamento fácil",Icon:CreditCard,text:"Pix, cartão e parcelamento disponível."},{title:"Suporte humano",Icon:Headphones,text:"Atendimento para ajudar quando precisar."}].map(({title,Icon,text}) => <div key={title} className="bg-white p-7"><div className="grid h-11 w-11 place-items-center rounded-xl bg-slate-100 text-slate-900"><Icon size={21} /></div><h3 className="mt-5 font-black">{title}</h3><p className="mt-2 text-sm leading-6 text-slate-500">{text}</p></div>)}
         </div>
