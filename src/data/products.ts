@@ -1,13 +1,6 @@
 export type Product = {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  oldPrice: number;
-  rating: number;
-  reviews: number;
-  badge?: string;
-  image: string;
+  id: string; name: string; category: string; price: number; oldPrice: number;
+  rating: number; reviews: number; badge?: string; image: string;
 };
 
 export const categories = [
@@ -16,7 +9,7 @@ export const categories = [
   { name: "Gamer", icon: "gamepad", tone: "from-cyan-600 to-blue-700" },
   { name: "Wearables", icon: "watch", tone: "from-emerald-600 to-teal-700" },
   { name: "Acessórios", icon: "usb", tone: "from-amber-500 to-orange-600" },
-];
+] as const;
 
 export const products: Product[] = [
   { id: "fone-pro", name: "Fone Bluetooth Pro ANC", category: "Áudio", price: 189.9, oldPrice: 249.9, rating: 4.9, reviews: 328, badge: "OFERTA", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=85" },
