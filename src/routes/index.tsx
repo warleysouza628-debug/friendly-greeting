@@ -101,7 +101,7 @@ function Index() {
                   </div>)}
                 </div>
               </div>
-              <div className="absolute bottom-5 left-5 right-5 z-20 flex items-center justify-between rounded-xl border border-white/10 bg-black/50 px-4 py-3 backdrop-blur">
+              <div className="mx-3 mb-3 flex items-center justify-between rounded-xl border border-white/10 bg-black/50 px-4 py-3 backdrop-blur">
                 <div><p className="text-[10px] font-black uppercase tracking-widest text-blue-300">PRODUTO EM PROMOÇÃO</p><p className="mt-1 font-mono text-lg font-black">{formatCountdown(ps5Seconds[ps5Slide])}</p></div>
                 <span className="text-[10px] font-bold text-slate-300">Oferta termina em</span>
               </div>
