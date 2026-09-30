@@ -16,7 +16,6 @@ function Login() {
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [suggestion, setSuggestion] = useState("");
-  const [devCode, setDevCode] = useState("");
 
   useEffect(() => { if (getSession()) navigate({ to: "/conta" }); }, [navigate]);
 
@@ -62,16 +61,34 @@ function Login() {
       return;
     }
 
-    setDevCode(result.pending.code);
-    setStep("code");
-    setMessage("");
+    fetch("/api/auth/send-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: result.pending.email, code: result.pending.code, name: result.pending.name }),
+    })
+      .then(async response => {
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.ok) throw new Error(data.message || "Não foi possível enviar o código.");
+        setStep("code");
+        setMessage("");
+      })
+      .catch(error => setMessage(error.message));
   };
 
   const resend = () => {
     const result = resendRegistrationCode();
     if (!result.ok) { setMessage(result.message); return; }
-    setDevCode(result.pending.code);
-    setMessage("Um novo código de confirmação foi gerado.");
+    fetch("/api/auth/send-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: result.pending.email, code: result.pending.code, name: result.pending.name }),
+    })
+      .then(async response => {
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.ok) throw new Error(data.message || "Não foi possível enviar o código.");
+        setMessage("Um novo código foi enviado para seu e-mail.");
+      })
+      .catch(error => setMessage(error.message));
   };
 
   return <div className="min-h-screen bg-[#f6f7f9] text-slate-950">
@@ -83,7 +100,7 @@ function Login() {
         {step === "form" && <div className="mb-6 grid grid-cols-2 rounded-xl bg-slate-100 p-1"><button onClick={() => { setMode("login"); setMessage(""); setSuggestion(""); }} className={mode === "login" ? "rounded-lg bg-white py-2.5 text-sm font-black shadow-sm" : "rounded-lg py-2.5 text-sm font-black text-slate-500"}>Entrar</button><button onClick={() => { setMode("register"); setMessage(""); setSuggestion(""); }} className={mode === "register" ? "rounded-lg bg-white py-2.5 text-sm font-black shadow-sm" : "rounded-lg py-2.5 text-sm font-black text-slate-500"}>Criar conta</button></div>}
         {step === "code" ? <form onSubmit={submit} className="space-y-4">
           <label className="block"><span className="mb-1.5 block text-xs font-bold text-slate-600">Código de confirmação</span><div className="flex items-center rounded-xl border border-slate-200 px-3"><ShieldCheck size={17} className="text-slate-400" /><input required inputMode="numeric" maxLength={6} value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ""))} className="w-full px-3 py-3 text-center text-lg font-black tracking-[.35em] outline-none" placeholder="000000" /></div></label>
-          {devCode && <p className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs font-bold text-amber-800">Modo de demonstração: código gerado <span className="font-black tracking-widest">{devCode}</span>. No ambiente real, ele deve ser enviado por e-mail via backend.</p>}
+          
           {message && <p className="rounded-xl bg-red-50 px-3 py-2.5 text-xs font-bold text-red-700">{message}</p>}
           {success && <p className="rounded-xl bg-emerald-50 px-3 py-2.5 text-xs font-bold text-emerald-700">Conta confirmada. Redirecionando...</p>}
           <button type="submit" className="w-full rounded-xl bg-slate-950 py-3.5 text-sm font-black text-white transition hover:bg-blue-600">Confirmar e criar conta</button>
@@ -99,7 +116,7 @@ function Login() {
           {success && <p className="rounded-xl bg-emerald-50 px-3 py-2.5 text-xs font-bold text-emerald-700">Conta autenticada. Redirecionando...</p>}
           <button type="submit" className="w-full rounded-xl bg-slate-950 py-3.5 text-sm font-black text-white transition hover:bg-blue-600">{mode === "login" ? "Entrar" : "Continuar e confirmar e-mail"}</button>
         </form>}
-        <p className="mt-6 text-center text-[11px] leading-5 text-slate-400">A confirmação de e-mail está preparada no fluxo. Para envio real do código, o projeto precisa de um serviço de e-mail/backend; por enquanto o código é gerado localmente para demonstração.</p>
+        <p className="mt-6 text-center text-[11px] leading-5 text-slate-400">A confirmação de e-mail protege sua conta. O código é enviado para o endereço informado e expira em 10 minutos.</p>
       </div>
     </main>
   </div>;
