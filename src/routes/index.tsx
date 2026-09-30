@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRight, Check, ShieldCheck, Sparkles, Truck, CreditCard, Headphones } from "lucide-react";
+import { ArrowRight, Check, ShieldCheck, Sparkles, Truck, CreditCard, Headphones, SearchX } from "lucide-react";
 import { categories, products } from "../data/products";
 import { StoreHeader } from "../components/StoreHeader";
 import { ProductCard } from "../components/ProductCard";
@@ -11,19 +11,56 @@ export const Route = createFileRoute("/")({ component: Index });
 function Index() {
   const [cartCount, setCartCount] = useState(0);
   const [category, setCategory] = useState("Todos");
-  const filtered = useMemo(() => category === "Todos" ? products : products.filter(p => p.category === category), [category]);
+  const [search, setSearch] = useState("");
+
+  const filtered = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    return products.filter(p => {
+      const matchesCategory = category === "Todos" || p.category === category;
+      const matchesSearch = !term || `${p.name} ${p.category}`.toLowerCase().includes(term);
+      return matchesCategory && matchesSearch;
+    });
+  }, [category, search]);
+
   const add = () => setCartCount(v => v + 1);
+  const selectCategory = (name: string) => {
+    setCategory(name);
+    document.getElementById("mais-vendidos")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return <div className="min-h-screen bg-[#f7f8fa] text-slate-950">
-    <StoreHeader cartCount={cartCount} />
+    <StoreHeader cartCount={cartCount} search={search} onSearch={setSearch} />
     <main>
-      <section className="relative overflow-hidden bg-slate-950 text-white"><div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-blue-600/30 blur-3xl" /><div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_.95fr] lg:px-8 lg:py-24"><div><div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-blue-200"><Sparkles size={14} /> Tecnologia selecionada para você</div><h1 className="max-w-3xl text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl">Tecnologia que acompanha <span className="text-blue-400">seu ritmo.</span></h1><p className="mt-6 max-w-xl text-base leading-7 text-slate-300 sm:text-lg">Produtos modernos, preços competitivos e uma experiência de compra simples do começo ao fim.</p><div className="mt-8 flex flex-wrap gap-3"><a href="#mais-vendidos" className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3.5 text-sm font-black text-slate-950 hover:bg-blue-50">Ver produtos <ArrowRight size={17} /></a><a href="#ofertas" className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-5 py-3.5 text-sm font-bold text-white hover:bg-white/10">Ver ofertas</a></div><div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-xs font-semibold text-slate-300"><span className="flex items-center gap-2"><Check size={15} className="text-emerald-400" /> Compra segura</span><span className="flex items-center gap-2"><Check size={15} className="text-emerald-400" /> Envio rastreado</span><span className="flex items-center gap-2"><Check size={15} className="text-emerald-400" /> Suporte humanizado</span></div></div>
+      <section className="relative overflow-hidden bg-slate-950 text-white">
+        <div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-blue-600/30 blur-3xl" />
+        <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl" />
+        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_.95fr] lg:px-8 lg:py-24">
+          <div>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-blue-200"><Sparkles size={14} /> Tecnologia selecionada para você</div>
+            <h1 className="max-w-3xl text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl">Tecnologia que acompanha <span className="text-blue-400">seu ritmo.</span></h1>
+            <p className="mt-6 max-w-xl text-base leading-7 text-slate-300 sm:text-lg">Produtos modernos, preços competitivos e uma experiência de compra simples do começo ao fim.</p>
+            <div className="mt-8 flex flex-wrap gap-3"><a href="#mais-vendidos" className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3.5 text-sm font-black text-slate-950 hover:bg-blue-50">Ver produtos <ArrowRight size={17} /></a><a href="#ofertas" className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-5 py-3.5 text-sm font-bold text-white hover:bg-white/10">Ver ofertas</a></div>
+            <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-xs font-semibold text-slate-300"><span className="flex items-center gap-2"><Check size={15} className="text-emerald-400" /> Compra segura</span><span className="flex items-center gap-2"><Check size={15} className="text-emerald-400" /> Envio rastreado</span><span className="flex items-center gap-2"><Check size={15} className="text-emerald-400" /> Suporte humanizado</span></div>
+          </div>
           <div className="relative mx-auto w-full max-w-xl"><div className="absolute -inset-5 rounded-[2rem] bg-gradient-to-r from-blue-500/30 to-cyan-400/20 blur-2xl" /><div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-3 shadow-2xl backdrop-blur"><img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=1200&q=85" alt="Produtos de tecnologia" className="aspect-[4/3] w-full rounded-[1.4rem] object-cover" /><div className="absolute bottom-7 left-7 right-7 flex items-center justify-between rounded-xl border border-white/10 bg-slate-950/80 px-4 py-3 backdrop-blur"><div><p className="text-[10px] font-bold uppercase tracking-widest text-blue-300">Destaque da semana</p><p className="mt-1 text-sm font-bold">Tecnologia sem complicação</p></div><ArrowRight size={18} className="text-white/60" /></div></div></div>
         </div>
       </section>
-      <section id="categorias" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8"><div className="mb-7 flex items-end justify-between"><div><p className="text-xs font-black uppercase tracking-[.2em] text-blue-600">Explore</p><h2 className="mt-2 text-3xl font-black tracking-tight">Compre por categoria</h2></div><a href="#mais-vendidos" className="hidden items-center gap-2 text-sm font-bold text-slate-600 sm:flex">Ver tudo <ArrowRight size={16} /></a></div><div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{categories.map(c => <CategoryCard key={c.name} {...c} />)}</div></section>
+
+      <section id="categorias" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mb-7 flex items-end justify-between"><div><p className="text-xs font-black uppercase tracking-[.2em] text-blue-600">Explore</p><h2 className="mt-2 text-3xl font-black tracking-tight">Compre por categoria</h2></div><button onClick={() => selectCategory("Todos")} className="hidden items-center gap-2 text-sm font-bold text-slate-600 sm:flex">Ver tudo <ArrowRight size={16} /></button></div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{categories.map(c => <CategoryCard key={c.name} {...c} onSelect={selectCategory} />)}</div>
+      </section>
+
       <section id="ofertas" className="bg-white py-16"><div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[.2em] text-blue-600">Preço especial</p><h2 className="mt-2 text-3xl font-black tracking-tight">Ofertas em destaque</h2></div><span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700">Descontos por tempo limitado</span></div><div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{products.slice(0,3).map(p => <ProductCard key={p.id} product={p} onAdd={add} />)}</div></div></section>
-      <section id="mais-vendidos" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8"><div className="mb-8"><p className="text-xs font-black uppercase tracking-[.2em] text-blue-600">Catálogo</p><h2 className="mt-2 text-3xl font-black tracking-tight">Mais vendidos</h2><div className="mt-5 flex gap-2 overflow-x-auto pb-1">{["Todos", ...categories.map(c => c.name)].map(c => <button key={c} onClick={() => setCategory(c)} className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold transition ${category === c ? "bg-slate-950 text-white" : "bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50"}`}>{c}</button>)}</div></div><div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{filtered.map(p => <ProductCard key={p.id} product={p} onAdd={add} />)}</div></section>
+
+      <section id="mais-vendidos" className="mx-auto max-w-7xl scroll-mt-28 px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mb-8"><p className="text-xs font-black uppercase tracking-[.2em] text-blue-600">Catálogo</p><h2 className="mt-2 text-3xl font-black tracking-tight">Mais vendidos</h2>
+          <div className="mt-5 flex gap-2 overflow-x-auto pb-1">{["Todos", ...categories.map(c => c.name)].map(c => <button key={c} onClick={() => setCategory(c)} className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold transition ${category === c ? "bg-slate-950 text-white" : "bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50"}`}>{c}</button>)}</div>
+        </div>
+        {search.trim() && <div className="mb-6 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-900">Resultados para “{search.trim()}” · {filtered.length} produto{filtered.length === 1 ? "" : "s"}</div>}
+        {filtered.length > 0 ? <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{filtered.map(p => <ProductCard key={p.id} product={p} onAdd={add} />)}</div> : <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center"><SearchX className="mx-auto text-slate-400" size={36} /><h3 className="mt-4 text-lg font-black">Nenhum produto encontrado</h3><p className="mt-2 text-sm text-slate-500">Tente outro termo ou volte para todas as categorias.</p><button onClick={() => { setSearch(""); setCategory("Todos"); }} className="mt-5 rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-blue-600">Limpar busca</button></div>}
+      </section>
+
       <section id="beneficios" className="border-y border-slate-200 bg-white"><div className="mx-auto grid max-w-7xl gap-px bg-slate-200 sm:grid-cols-2 lg:grid-cols-4">{[{title:"Frete rápido",Icon:Truck,text:"Envio com rastreio do início ao fim."},{title:"Compra protegida",Icon:ShieldCheck,text:"Pagamento seguro e proteção no pedido."},{title:"Pagamento fácil",Icon:CreditCard,text:"Pix, cartão e parcelamento disponível."},{title:"Suporte humano",Icon:Headphones,text:"Atendimento para ajudar quando precisar."}].map(({title,Icon,text}) => <div key={title} className="bg-white p-7"><div className="grid h-11 w-11 place-items-center rounded-xl bg-slate-100 text-slate-900"><Icon size={21} /></div><h3 className="mt-5 font-black">{title}</h3><p className="mt-2 text-sm leading-6 text-slate-500">{text}</p></div>)}</div></section>
     </main>
     <footer className="bg-slate-950 px-4 py-10 text-white"><div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-lg font-black">NEXO<span className="text-blue-400">TECH</span></p><p className="mt-1 text-xs text-slate-500">Tecnologia que acompanha você.</p></div><p className="text-xs text-slate-500">© 2026 NexoTech. Todos os direitos reservados.</p></div></footer>
