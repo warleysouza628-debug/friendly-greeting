@@ -26,15 +26,57 @@ function CreatorStudio() {
   const [duration, setDuration] = useState("8s");
   const [model, setModel] = useState("Cinematic Pro");
   const [audio, setAudio] = useState(true);
-  const [generating, setGenerating] = useState(false);\n  const [videoUrl, setVideoUrl] = useState<string | null>(null);\n  const [generationError, setGenerationError] = useState<string | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [generationError, setGenerationError] = useState<string | null>(null);
+  const [generationProgress, setGenerationProgress] = useState(0);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [tab, setTab] = useState("create");
   const [scenes, setScenes] = useState(["O começo da história", "A descoberta", "O momento decisivo"]);
 
-  const generate = () => {
+  const generate = async () => {
     if (!prompt.trim() || generating) return;
     setGenerating(true);
-    window.setTimeout(() => setGenerating(false), 1800);
+    setGenerationError(null);
+    setVideoUrl(null);
+    setGenerationProgress(0);
+    try {
+      const response = await fetch("/api/generate-video", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt, duration: Number.parseInt(duration, 10), aspect, audio }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error || "Não foi possível iniciar a geração.");
+
+      if (data.mode === "long") {
+        const ids = data.sceneIds.join(",");
+        let mergeId = "";
+        for (let attempt = 0; attempt < 180; attempt++) {
+          await new Promise((resolve) => window.setTimeout(resolve, 3000));
+          const statusResponse = await fetch(`/api/generate-video?ids=${encodeURIComponent(ids)}${mergeId ? `&mergeId=${encodeURIComponent(mergeId)}` : ""}`);
+          const status = await statusResponse.json();
+          if (!statusResponse.ok) throw new Error(status.error || "Uma cena falhou.");
+          setGenerationProgress(status.progress ?? 0);
+          if (status.mergeId) mergeId = status.mergeId;
+          if (status.status === "succeeded" && status.videoUrl) {
+            setVideoUrl(status.videoUrl);
+            break;
+          }
+          if (status.status === "failed") throw new Error(status.error || "A geração falhou.");
+          if (attempt === 179) throw new Error("A geração demorou mais que o esperado. O processamento pode continuar no servidor.");
+        }
+      } else if (data.videoUrl) {
+        setVideoUrl(data.videoUrl);
+        setGenerationProgress(100);
+      } else {
+        setGenerationError("A geração foi iniciada, mas ainda está processando.");
+      }
+    } catch (error) {
+      setGenerationError(error instanceof Error ? error.message : "Erro ao gerar o vídeo.");
+    } finally {
+      setGenerating(false);
+    }
   };
 
   return (
@@ -109,7 +151,7 @@ function CreatorStudio() {
             <aside className="space-y-5">
               <section className="rounded-2xl border border-white/[.08] bg-[#0e0e12] p-4"><div className="flex items-center justify-between"><div><p className="text-xs font-black">Ideias para viralizar</p><p className="mt-1 text-[10px] text-zinc-600">Presets para conteúdo curto.</p></div><Zap size={15} className="text-amber-400"/></div><div className="mt-4 space-y-2">{presets.map(([title,text])=><button key={title} onClick={()=>{setPrompt(text);setTab("create")}} className="w-full rounded-xl border border-white/[.06] bg-white/[.02] p-3 text-left hover:border-violet-500/20"><p className="text-[11px] font-black text-zinc-300">{title}</p><p className="mt-1 text-[10px] leading-4 text-zinc-600">{text}</p></button>)}</div></section>
               <section className="rounded-2xl border border-white/[.08] bg-[#0e0e12] p-4"><div className="flex items-center justify-between"><p className="text-xs font-black">Preview</p><span className="rounded-full bg-white/[.05] px-2 py-1 text-[9px] font-bold text-zinc-500">{aspect}</span></div><div className="mt-3 aspect-[9/12] overflow-hidden rounded-xl bg-black">
-                {videoUrl ? <video src={videoUrl} controls autoPlay className="h-full w-full object-contain" /> : <div className="flex h-full flex-col items-center justify-center p-5 text-center"><div className="grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/5"><Clapperboard size={20} className="text-violet-300"/></div><p className="mt-3 text-xs font-black">{generating ? "Gerando seu vídeo..." : "Seu vídeo aparece aqui"}</p><p className="mt-1 text-[10px] leading-4 text-zinc-600">{generationError || "Gere uma cena para visualizar e continuar editando."}</p></div>}
+                {videoUrl ? <video src={videoUrl} controls autoPlay className="h-full w-full object-contain" /> : <div className="flex h-full flex-col items-center justify-center p-5 text-center"><div className="grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/5"><Clapperboard size={20} className="text-violet-300"/></div><p className="mt-3 text-xs font-black">{generating ? "Gerando seu vídeo..." : "Seu vídeo aparece aqui"}</p><p className="mt-1 text-[10px] leading-4 text-zinc-600">{generationError || (generating && duration === "60s" ? `Gerando 4 cenas e montando o vídeo... ${generationProgress}%` : "Gere uma cena para visualizar e continuar editando.")}</p></div>}
               </div><div className="mt-3 flex gap-2"><a href={videoUrl || "#"} download={videoUrl ? "frameflow-video.mp4" : undefined} className={"flex-1 rounded-lg border border-white/[.07] py-2 text-center text-[10px] font-bold " + (videoUrl ? "text-zinc-300 hover:bg-white/[.04]" : "pointer-events-none text-zinc-700")}><Download size={12} className="mr-1 inline"/> Exportar</a><button className="flex-1 rounded-lg border border-white/[.07] py-2 text-[10px] font-bold text-zinc-500">Editar</button></div></section>
               <section className="rounded-2xl border border-white/[.08] bg-[#0e0e12] p-4"><p className="text-xs font-black">Fluxo de produção</p><div className="mt-4 space-y-3">{[["01","Ideia","Descreva a cena"],["02","Recursos","Personagens e referências"],["03","Cenas","Conecte os takes"],["04","Refino","Edite por texto"],["05","Exportar","Publique em 9:16"]].map(([n,t,d])=><div key={n} className="flex gap-3"><div className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-white/[.05] text-[9px] font-black text-zinc-500">{n}</div><div><p className="text-[10px] font-black">{t}</p><p className="text-[9px] text-zinc-600">{d}</p></div></div>)}</div></section>
             </aside>
